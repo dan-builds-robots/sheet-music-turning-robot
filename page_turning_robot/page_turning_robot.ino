@@ -6,6 +6,8 @@ int delayPeriod = 1000;
 int servoPinPageTurning = 3;
 int servoPinLinearActuator = 6;
 int servoPos = 0;
+int value = 20;
+int int_value = 20;
 Servo pageTurningServo;
 Servo linearActuatorServo;
 
@@ -14,6 +16,8 @@ int prevValue = 1;
 void setup() {
 
   Serial.begin(38400);
+
+  pinMode(5, OUTPUT);
 
   // setting up the servos
   pageTurningServo.attach(servoPinPageTurning);
@@ -28,14 +32,16 @@ void setup() {
 }
 
 void loop() {
-
   if (Serial.available() > 0) {
-    
-    int value = digitalRead(Serial.read());
-  
-    if (value == 0 && prevValue == 1) {
 
+    Serial.println("received data");
+    value = Serial.read();
+    int_value = int(value);
+    Serial.println(int_value);
+
+    if (int_value == 0 && prevValue == 1) {
       Serial.println("pedal pressed");
+      digitalWrite(5, HIGH);
 
       // move the page flipper downwards
       linearActuatorServo.write(180);
@@ -71,7 +77,7 @@ void loop() {
       // pageTurningServo.write(0);
 
     }
-
+    delay(10);
     prevValue = value;
 
   }
